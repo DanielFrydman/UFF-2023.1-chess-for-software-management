@@ -7,4 +7,5 @@ public abstract class Piece : MonoBehaviour
     void OnMouseDown(){
         Debug.Log("Clicou em "+transform);
     }
+
 }
