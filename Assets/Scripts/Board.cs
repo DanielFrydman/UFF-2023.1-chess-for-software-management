@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 
+public delegate void TileClickedEvent(object sender, object args);
+
 public class Board : MonoBehaviour
 {
-    public static Board instace;
+    public static Board instance;
     public Dictionary<Vector2Int, Tile> tiles = new Dictionary<Vector2Int, Tile>();
     public Transform goldHolder{get{ return StateMachineController.instance.player1.transform; }}
     public Transform greenHolder{get{ return StateMachineController.instance.player2.transform; }}
     public List<Piece> goldPieces = new List<Piece>();
     public List<Piece> greenPieces = new List<Piece>();
+    public TileClickedEvent tileClicked = delegate{};
+    public Piece selectedPiece;
     void Awake(){
-        instace = this;
+        instance = this;
     }
     public async Task Load(){
         GetTeams();
