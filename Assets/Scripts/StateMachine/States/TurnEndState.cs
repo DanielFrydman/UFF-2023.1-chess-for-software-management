@@ -14,12 +14,12 @@ public class TurnEndState : State
             machine.ChangeTo<TurnBeginState>();
     }
     bool CheckTeams(){
-        Piece goldPiece = Board.instace.goldPieces.Find((x) => x.gameObject.activeSelf == true);
+        Piece goldPiece = Board.instance.goldPieces.Find((x) => x.gameObject.activeSelf == true);
         if (goldPiece == null){
             return true;
         }
 
-        Piece greenPiece = Board.instace.greenPieces.Find((x) => x.gameObject.activeSelf == true);
+        Piece greenPiece = Board.instance.greenPieces.Find((x) => x.gameObject.activeSelf == true);
         if (greenPiece == null){
             return true;
         }
