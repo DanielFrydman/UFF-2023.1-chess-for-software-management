@@ -18,25 +18,25 @@ public class StateMachineController : MonoBehaviour
     }
     public void ChangeTo<T>() where T:State{
         State state = GetState<T>();
-        if (_current != state)
+        if(_current != state)
             ChangeState(state);
     }
     public T GetState<T>() where T:State{
         T target = GetComponent<T>();
-        if (target == null)
+        if(target == null)
             target = gameObject.AddComponent<T>();
         return target;
     }
     void ChangeState(State value){
-        if (busy)
+        if(busy)
             return;
         busy = true;
 
-        if (_current != null)
+        if(_current != null)
             _current.Exit();
         
         _current = value;
-        if (_current != null)
+        if(_current != null)
             _current.Enter();
 
         busy = false;

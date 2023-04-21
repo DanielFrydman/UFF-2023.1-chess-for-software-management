@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pawn : Piece
+public abstract class Movement
 {
-  void Awake(){
-    movement = new PawnMovement();
-  }
+    public abstract List<Tile> GetValidMoves();
 }

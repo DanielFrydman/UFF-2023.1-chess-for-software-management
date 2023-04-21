@@ -8,19 +8,19 @@ public class TurnEndState : State
     public override async void Enter(){
         bool gameFinished = CheckTeams();
         await Task.Delay(100);
-        if (gameFinished)
+        if(gameFinished)
             machine.ChangeTo<GameEndState>();
         else
             machine.ChangeTo<TurnBeginState>();
     }
     bool CheckTeams(){
         Piece goldPiece = Board.instance.goldPieces.Find((x) => x.gameObject.activeSelf == true);
-        if (goldPiece == null){
+        if(goldPiece == null){
             return true;
         }
 
         Piece greenPiece = Board.instance.greenPieces.Find((x) => x.gameObject.activeSelf == true);
-        if (greenPiece == null){
+        if(greenPiece == null){
             return true;
         }
 
