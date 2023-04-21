@@ -5,6 +5,9 @@ using UnityEngine;
 public class StateMachineController : MonoBehaviour
 {
     public static StateMachineController instance;
+    public Player player1;
+    public Player player2;
+    public Player currentlyPlaying;
     State _current;
     bool busy;
     void Awake(){
