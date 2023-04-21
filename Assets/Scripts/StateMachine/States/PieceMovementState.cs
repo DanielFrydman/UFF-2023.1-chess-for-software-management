@@ -16,6 +16,7 @@ public class PieceMovementState : State
         }
 
         piece.tile.content = piece;
+        piece.wasMoved = true;
 
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
         float timing = Vector3.Distance(piece.transform.position, Board.instance.selectedHighlight.transform.position)*0.5f;

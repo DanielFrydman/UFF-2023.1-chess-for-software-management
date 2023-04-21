@@ -6,7 +6,12 @@ public class PawnMovement : Movement
 {
     public override List<Tile> GetValidMoves(){
         Vector2Int direction = GetDirection();
-        List<Tile> movable = UntilBlockedPath(direction, false);
+
+        int limit = 1;
+        if(!Board.instance.selectedPiece.wasMoved)
+         limit = 2;
+
+        List<Tile> movable = UntilBlockedPath(direction, false, limit);
         movable.AddRange(GetPawnAttack(direction));
         return movable;
     }

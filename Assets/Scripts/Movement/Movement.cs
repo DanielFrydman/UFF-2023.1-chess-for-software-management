@@ -18,10 +18,10 @@ public abstract class Movement
         Board.instance.tiles.TryGetValue(position, out tile);
         return tile;
     }
-    protected List<Tile> UntilBlockedPath(Vector2Int direction, bool includeBlocked){
+    protected List<Tile> UntilBlockedPath(Vector2Int direction, bool includeBlocked, int limit){
         List<Tile> moves = new List<Tile>();
         Tile current = Board.instance.selectedPiece.tile;
-        while(current!=null){
+        while(current!=null && moves.Count<limit){
             if(Board.instance.tiles.TryGetValue(current.pos+direction, out current)){
                 if(current.content==null){
                     moves.Add(current);
