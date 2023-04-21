@@ -19,10 +19,8 @@ public class MoveSelectionState : State
             return;
         Vector3 v3Pos = highlight.transform.position;
         Vector2Int pos = new Vector2Int((int)v3Pos.x, (int)v3Pos.y);
-        Tile tileClicked;
-        if(Board.instance.tiles.TryGetValue(pos, out tileClicked)){
-            Board.instance.selectedHighlight = highlight;
-            machine.ChangeTo<PieceMovementState>();
-        }
+        Tile tileClicked = highlight.tile;
+        Board.instance.selectedHighlight = highlight;
+        machine.ChangeTo<PieceMovementState>();
     }
 }
