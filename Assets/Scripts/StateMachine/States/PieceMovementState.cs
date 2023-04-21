@@ -7,7 +7,6 @@ public class PieceMovementState : State
 {
     public override async void Enter(){
         Piece piece = Board.instance.selectedPiece;
-        piece.transform.position = Board.instance.selectedHighlight.transform.position;
         piece.tile.content = null;
         piece.tile = Board.instance.selectedHighlight.tile;
 
@@ -18,7 +17,12 @@ public class PieceMovementState : State
 
         piece.tile.content = piece;
 
-        await Task.Delay(100);
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+        LeanTween.move(piece.gameObject, Board.instance.selectedHighlight.transform.position, 1.5f).
+            setOnComplete(()=> {
+                tcs.SetResult(true);
+            })
+        await tcs.Task;
         machine.ChangeTo<TurnEndState>();
     }
 }
