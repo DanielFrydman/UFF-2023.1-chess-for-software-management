@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 public class LoadState : State
 {
     public override async void Enter(){
-        await Board.instace.Load();
+        await Board.instance.Load();
         await LoadAllPiecesAsync();
-        //machine.ChangeTo<TurnBeginState>();
+        machine.currentlyPlaying = machine.player2;
+        machine.ChangeTo<TurnBeginState>();
     }
     async Task LoadAllPiecesAsync(){
-        LoadTeamPieces(Board.instace.greenPieces);
-        LoadTeamPieces(Board.instace.goldPieces);
+        LoadTeamPieces(Board.instance.greenPieces);
+        LoadTeamPieces(Board.instance.goldPieces);
         await Task.Delay(100);
     }
     void LoadTeamPieces(List<Piece> pieces){
         foreach(Piece piece in pieces){
-            Board.instace.AddPiece(piece.transform.parent.name, piece);
+            Board.instance.AddPiece(piece.transform.parent.name, piece);
         }
     }
 }
