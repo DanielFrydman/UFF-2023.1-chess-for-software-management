@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Pawn : Piece
 {
-    
+  void Awake(){
+    movement = new PawnMovement();
+  }
 }
