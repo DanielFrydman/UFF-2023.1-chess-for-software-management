@@ -7,8 +7,8 @@ public class Board : MonoBehaviour
 {
     public static Board instace;
     public Dictionary<Vector2Int, Tile> tiles = new Dictionary<Vector2Int, Tile>();
-    public Transform goldHolder;
-    public Transform greenHolder;
+    public Transform goldHolder{get{ return StateMachineController.instance.player1.transform; }}
+    public Transform greenHolder{get{ return StateMachineController.instance.player2.transform; }}
     public List<Piece> goldPieces = new List<Piece>();
     public List<Piece> greenPieces = new List<Piece>();
     void Awake(){
