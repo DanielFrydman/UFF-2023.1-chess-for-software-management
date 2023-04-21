@@ -9,11 +9,11 @@ public abstract class State : MonoBehaviour
         get { return StateMachineController.instance; }
     }
 
-    public virtual void Enter() {
+    public virtual void Enter(){
 
     }
 
-    public virtual void Exit() {
+    public virtual void Exit(){
 
     }
 }

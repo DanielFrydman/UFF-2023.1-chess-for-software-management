@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LoadState : State
 {
-    public override void Enter() {
+    public override void Enter(){
         
     }
 }
