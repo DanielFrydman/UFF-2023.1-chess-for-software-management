@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoadState : State
+public class GameEndState : State
 {
-    public override void Enter() {
-        
+    public override void Enter(){
     }
 }
