@@ -354,6 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goldPieces: []
   greenPieces: []
+  selectedPiece: {fileID: 0}
 --- !u!1001 &263470138
 PrefabInstance:
   m_ObjectHideFlags: 0
