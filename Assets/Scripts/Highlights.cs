@@ -19,6 +19,7 @@ public class Highlights : MonoBehaviour
             sr.gameObject.SetActive(true);
             sr.color = StateMachineController.instance.currentlyPlaying.color;
             sr.transform.position = new Vector3(t.pos.x, t.pos.y, 0);
+            sr.GetComponent<HighlightClick>().tile = t;
             activeHighlights.Enqueue(sr);
         }
     }
