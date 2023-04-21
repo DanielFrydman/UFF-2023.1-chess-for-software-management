@@ -13,7 +13,6 @@ public class PieceMovementState : State
 
         if(piece.tile.content != null){
             Piece deadPiece = piece.tile.content;
-            Debug.LogFormat("peça {0} foi morta", deadPiece.transform);
             deadPiece.gameObject.SetActive(false);
         }
 
