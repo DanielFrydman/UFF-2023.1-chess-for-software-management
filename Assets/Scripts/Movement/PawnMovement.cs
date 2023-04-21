@@ -36,15 +36,7 @@ public class PawnMovement : Movement
         }
         return valid;
     }
-    bool IsEnemy(Vector2Int pos, out Tile temp){
-        if(Board.instance.tiles.TryGetValue(pos, out temp)){
-            if(temp != null && temp.content != null){
-                if(temp.content.transform.parent != Board.instance.selectedPiece.transform.parent)
-                    return true;
-            }
-        }
-        return false;
-    }
+    
     List<Tile> GetPawnAttack(Vector2Int direction){
         List<Tile> pawnAttack = new List<Tile>();
         Tile temp;
