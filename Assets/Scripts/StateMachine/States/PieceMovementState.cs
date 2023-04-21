@@ -18,10 +18,11 @@ public class PieceMovementState : State
         piece.tile.content = piece;
 
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        LeanTween.move(piece.gameObject, Board.instance.selectedHighlight.transform.position, 1.5f).
+        float timing = Vector3.Distance(piece.transform.position, Board.instance.selectedHighlight.transform.position)*0.5f;
+        LeanTween.move(piece.gameObject, Board.instance.selectedHighlight.transform.position, timing).
             setOnComplete(()=> {
                 tcs.SetResult(true);
-            })
+            });
         await tcs.Task;
         machine.ChangeTo<TurnEndState>();
     }
