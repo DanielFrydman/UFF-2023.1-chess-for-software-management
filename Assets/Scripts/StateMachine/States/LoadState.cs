@@ -8,7 +8,8 @@ public class LoadState : State
     public override async void Enter(){
         await Board.instace.Load();
         await LoadAllPiecesAsync();
-        //machine.ChangeTo<TurnBeginState>();
+        machine.currentlyPlaying = machine.player2;
+        machine.ChangeTo<TurnBeginState>();
     }
     async Task LoadAllPiecesAsync(){
         LoadTeamPieces(Board.instace.greenPieces);
