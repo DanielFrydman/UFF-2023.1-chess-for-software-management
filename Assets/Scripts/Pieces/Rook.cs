@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Rook : Piece
 {
-   
+   void Awake(){
+      movement = new RookMovement();
+    }
 }
