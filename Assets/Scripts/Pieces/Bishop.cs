@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Bishop : Piece
 {
-    
+   void Awake(){
+      movement = new BishopMovement();
+    } 
 }
