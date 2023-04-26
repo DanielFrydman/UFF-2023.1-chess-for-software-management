@@ -5,10 +5,10 @@ using UnityEngine;
 public class PieceSelectionState : State
 {
     public override void Enter(){
-        Board.instance.tileClicked += PiceClicked;
+        InputController.instance.tileClicked += PiceClicked;
     }
     public override void Exit(){
-        Board.instance.tileClicked -= PiceClicked;
+        InputController.instance.tileClicked -= PiceClicked;
     }
     void PiceClicked(object sender, object args){
         Piece piece = sender as Piece;
