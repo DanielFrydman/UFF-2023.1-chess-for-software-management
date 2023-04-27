@@ -13,6 +13,7 @@ public class PawnMovement : Movement
 
         List<Tile> movable = UntilBlockedPath(direction, false, limit);
         movable.AddRange(GetPawnAttack(direction));
+        SetNormalMove(movable);
         return movable;
     }
     Vector2Int GetDirection(){
