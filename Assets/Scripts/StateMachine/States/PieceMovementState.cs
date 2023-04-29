@@ -24,6 +24,9 @@ public class PieceMovementState : State
             case MoveType.EnPassant:
                 EnPassant(tcs);
                 break;
+            case MoveType.Promotion:
+                Promotion(tcs);
+                break;
         }
 
 
@@ -104,5 +107,25 @@ public class PieceMovementState : State
         enemy.content.gameObject.SetActive(false);
         enemy.content = null;
         NormalMove(tsc);
+    }
+    async void Promotion(TaskCompletionSource<bool> tsc){
+        TaskCompletionSource<bool> movementTCS = new TaskCompletionSource<bool>();
+        NormalMove(movementTCS);
+        await movementTCS.Task;
+        
+        StateMachineController.instance.taskHold = new TaskCompletionSource<object>();
+        StateMachineController.instance.promotionPanel.SetActive(true);
+
+        await StateMachineController.instance.taskHold.Task;
+
+        string result = StateMachineController.instance.taskHold.Task.Result as string;
+        if(result == "Knight"){
+            Board.instance.selectedPiece.movement = new KnightMovement();
+        }else{
+            Board.instance.selectedPiece.movement = new QueenMovement();
+        }
+
+        StateMachineController.instance.promotionPanel.SetActive(false);
+        tsc.SetResult(true);
     }
 }
