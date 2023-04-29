@@ -6,15 +6,21 @@ public class PawnMovement : Movement
 {
     public override List<Tile> GetValidMoves(){
         Vector2Int direction = GetDirection();
+        List<Tile> moveable = GetPawnAttack(direction);
+        List<Tile> moves;
 
-        int limit = 1;
-        if(!Board.instance.selectedPiece.wasMoved)
-         limit = 2;
+        if(!Board.instance.selectedPiece.wasMoved){
+            moves = UntilBlockedPath(direction, false, 2);
+            SetNormalMove(moves);
+            if(moves.Count == 2)
+                moves[1].moveType = MoveType.PawnDoubleMove;
+        }else{
+            moves = UntilBlockedPath(direction, false, 1);
+            SetNormalMove(moves);
+        }
+        moveable.AddRange(moves);
 
-        List<Tile> movable = UntilBlockedPath(direction, false, limit);
-        movable.AddRange(GetPawnAttack(direction));
-        SetNormalMove(movable);
-        return movable;
+        return moveable;
     }
     Vector2Int GetDirection(){
         if(StateMachineController.instance.currentlyPlaying.transform.name == "GreenPieces")
@@ -24,18 +30,26 @@ public class PawnMovement : Movement
 
     List<Tile> GetPawnAttack(Vector2Int direction){
         List<Tile> pawnAttack = new List<Tile>();
-        Tile temp;
         Piece piece = Board.instance.selectedPiece;
         Vector2Int leftPos = new Vector2Int(piece.tile.pos.x - 1, piece.tile.pos.y + direction.y);
         Vector2Int rightPos = new Vector2Int(piece.tile.pos.x + 1, piece.tile.pos.y + direction.y);
-        temp = GetTile(leftPos);
-        if(temp != null && IsEnemy(temp)){
-            pawnAttack.Add(temp);
-        }
-        temp = GetTile(rightPos);
-        if(temp != null && IsEnemy(temp)){
-            pawnAttack.Add(temp);
-        }
+        
+        GetPawnAttack(GetTile(leftPos), pawnAttack);
+        GetPawnAttack(GetTile(rightPos), pawnAttack);
+        
         return pawnAttack;
     }
+    void GetPawnAttack(Tile tile, List<Tile> pawnAttack){
+        if(tile == null)
+            return;
+        if(IsEnemy(tile)){
+            tile.moveType = MoveType.Normal;
+            pawnAttack.Add(tile);
+        }else if(tile.moveType == MoveType.EnPassant){
+           pawnAttack.Add(tile); 
+        }
+    }
 }
+
+
+    

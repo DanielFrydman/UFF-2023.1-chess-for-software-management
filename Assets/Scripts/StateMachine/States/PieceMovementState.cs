@@ -6,13 +6,23 @@ using System.Threading.Tasks;
 public class PieceMovementState : State
 {
     public override async void Enter(){
+
+        MoveType movetype = Board.instance.selectedHighlight.tile.moveType;
+        ClearEnPassants();
+
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        switch(Board.instance.selectedHighlight.tile.moveType){
+        switch(movetype){
             case MoveType.Normal:
                 NormalMove(tcs);
                 break;
             case MoveType.Castling:
                 Castling(tcs);
+                break;
+            case MoveType.PawnDoubleMove:
+                PawnDoubleMove(tcs);
+                break;
+            case MoveType.EnPassant:
+                EnPassant(tcs);
                 break;
         }
 
@@ -65,5 +75,34 @@ public class PieceMovementState : State
             });
         LeanTween.move(rook.gameObject, new Vector3(rook.tile.pos.x, rook.tile.pos.y, 0), 1.4f);
 
+    }
+   void ClearEnPassants(){
+    ClearEnPassants(5);
+    ClearEnPassants(2);
+   }
+   void ClearEnPassants(int height){
+        Vector2Int positions = new Vector2Int(0, height);
+        for(int i=0; i<7; i++){
+            positions.x = positions.x+1;
+            Board.instance.tiles[positions].moveType = MoveType.Normal;
+        }
+    }
+    void PawnDoubleMove(TaskCompletionSource<bool> tsc){
+        Piece pawn = Board.instance.selectedPiece;
+        Vector2Int direction = pawn.tile.pos.y > Board.instance.selectedHighlight.tile.pos.y ?
+            new Vector2Int(0, -1):
+            new Vector2Int(0, 1);
+        Board.instance.tiles[pawn.tile.pos+direction].moveType = MoveType.EnPassant;
+        NormalMove(tsc);
+    }
+    void EnPassant(TaskCompletionSource<bool> tsc){
+        Piece pawn = Board.instance.selectedPiece;
+        Vector2Int direction = pawn.tile.pos.y > Board.instance.selectedHighlight.tile.pos.y ?
+            new Vector2Int(0, 1):
+            new Vector2Int(0, -1);
+        Tile enemy = Board.instance.tiles[Board.instance.selectedHighlight.tile.pos+direction];
+        enemy.content.gameObject.SetActive(false);
+        enemy.content = null;
+        NormalMove(tsc);
     }
 }
