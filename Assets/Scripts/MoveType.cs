@@ -6,6 +6,7 @@ public enum MoveType
 {
     Normal,
     Castling,
+    PawnDoubleMove,
     EnPassant,
     Promotion,
     
