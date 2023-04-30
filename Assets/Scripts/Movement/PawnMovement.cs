@@ -18,7 +18,10 @@ public class PawnMovement : Movement
             moves = UntilBlockedPath(direction, false, 1);
             SetNormalMove(moves);
         }
+
+
         moveable.AddRange(moves);
+        CheckPromotion(moves);
 
         return moveable;
     }
@@ -47,6 +50,12 @@ public class PawnMovement : Movement
             pawnAttack.Add(tile);
         }else if(tile.moveType == MoveType.EnPassant){
            pawnAttack.Add(tile); 
+        }
+    }
+    void CheckPromotion(List<Tile> tiles){
+        foreach (Tile t in tiles){
+            if(t.pos.y == 0 || t.pos.y ==7)
+            t.moveType = MoveType.Promotion;
         }
     }
 }
