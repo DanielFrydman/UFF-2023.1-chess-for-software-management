@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 public class TurnEndState : State
 {
     public override async void Enter(){
-        bool gameFinished = CheckTeams();
+        bool gameFinished = CheckConditions();
         await Task.Delay(100);
         if(gameFinished)
             machine.ChangeTo<GameEndState>();
         else
             machine.ChangeTo<TurnBeginState>();
+    }
+    bool CheckConditions(){
+        if(CheckTeams() || CheckKing())
+            return true;
+        return false;  
     }
     bool CheckTeams(){
         Piece goldPiece = Board.instance.goldPieces.Find((x) => x.gameObject.activeSelf == true);
@@ -24,6 +29,19 @@ public class TurnEndState : State
             return true;
         }
 
+        return false;
+    }
+    bool CheckKing(){
+        King king = Board.instance.goldHolder.GetComponentInChildren<King>();
+        if(king == null){
+            Debug.Log("Lado verde ganhou");
+            return true;
+        }
+        king = Board.instance.greenHolder.GetComponentInChildren<King>();
+        if(king == null){
+            Debug.Log("Lado dourado ganhou");
+            return true;
+        }
         return false;
     }
 }
