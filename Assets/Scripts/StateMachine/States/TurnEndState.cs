@@ -34,12 +34,10 @@ public class TurnEndState : State
     bool CheckKing(){
         King king = Board.instance.goldHolder.GetComponentInChildren<King>();
         if(king == null){
-            Debug.Log("Lado verde ganhou");
             return true;
         }
         king = Board.instance.greenHolder.GetComponentInChildren<King>();
         if(king == null){
-            Debug.Log("Lado dourado ganhou");
             return true;
         }
         return false;
