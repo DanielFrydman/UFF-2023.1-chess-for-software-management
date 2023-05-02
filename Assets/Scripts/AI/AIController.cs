@@ -8,6 +8,9 @@ public class AIController : MonoBehaviour
     public static AIController instance;
     public Ply currentState;
     public HighlightClick AIhighlight;
+    public Ply minPly;
+    public Ply maxPly;
+    public int objectivePlyDepth = 2;
     void Awake(){
         instance = this;
     }
@@ -20,7 +23,25 @@ public class AIController : MonoBehaviour
         Ply currentPly = currentState;
         currentPly.originPly = null;
         currentPly.futurePlies = new List<Ply>();
-        foreach(PieceEvaluation eva in currentPly.golds){
+
+        maxPly = new Ply();
+        maxPly.score = float.MinValue;
+        minPly = new Ply();
+        minPly.score = float.MaxValue;
+
+        int currentPlyDepth = 1;
+        CalculatePly(currentPly, currentPly.golds, currentPlyDepth);
+        currentPlyDepth++;
+        foreach(Ply plyToTest in currentPly.futurePlies){
+            CalculatePly(plyToTest, plyToTest.greens, currentPlyDepth);
+        }
+
+        currentPly.futurePlies.Sort((x, y) => x.score.CompareTo(y.score));
+        Debug.Log("escolher "+maxPly.name);
+    }
+    async void CalculatePly(Ply parentPly, List<PieceEvaluation> team, int currentPlyDepth){
+        parentPly.futurePlies = new List<Ply>();
+        foreach(PieceEvaluation eva in team){
             foreach(Tile t in eva.availableMoves){
                 Board.instance.selectedPiece = eva.piece;
                 Board.instance.selectedHighlight = AIhighlight;
@@ -30,15 +51,25 @@ public class AIController : MonoBehaviour
                 PieceMovementState.MovePiece(tcs, true);
                 await tcs.Task;
                 Ply newPly = CreateSnapShot();
-                newPly.name = string.Format("{0}, {1} to {2}", currentPly.name, eva.piece.name, t.pos);
+                newPly.name = string.Format("{0}, {1} to {2}", parentPly.name, eva.piece.transform.parent.name+eva.piece.name, t.pos);
                 newPly.changes = PieceMovementState.changes;
                 EvaluateBoard(newPly);
+                newPly.originPly = parentPly;
                 newPly.moveType = t.moveType;
-                currentPly.futurePlies.Add(newPly);
+                parentPly.futurePlies.Add(newPly);
                 ResetBoard(newPly);
             }
         }
-        currentPly.futurePlies.Sort((x, y) => x.score.CompareTo(y.score));
+        if(currentPlyDepth == objectivePlyDepth)
+            SetMinMax(parentPly.futurePlies);
+    }
+    void SetMinMax(List<Ply> plies){
+        foreach(Ply p in plies){
+            if(p.score > maxPly.score)
+                maxPly = p;
+            else if(p.score < minPly.score)
+                minPly = p;
+        }
     }
     Ply CreateSnapShot(){
         Ply ply = new Ply();
