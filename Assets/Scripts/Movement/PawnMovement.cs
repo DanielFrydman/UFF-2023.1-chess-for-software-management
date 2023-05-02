@@ -29,7 +29,7 @@ public class PawnMovement : Movement
         return moveable;
     }
     Vector2Int GetDirection(){
-        if(StateMachineController.instance.currentlyPlaying.transform.name == "GreenPieces")
+        if(Board.instance.selectedPiece.transform.parent.name == "GreenPieces")
             return new Vector2Int(0, -1);
         return new Vector2Int(0, 1);
     }
