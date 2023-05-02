@@ -12,4 +12,5 @@ public class Ply
     public MoveType moveType;
     public Ply originPly;
     public List<Ply> futurePlies;
+    public Ply bestFuture;
 }
