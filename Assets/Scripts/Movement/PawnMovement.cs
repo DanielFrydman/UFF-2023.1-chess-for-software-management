@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PawnMovement : Movement
 {
+    public PawnMovement(){
+        value = 1;
+    }
     public override List<Tile> GetValidMoves(){
         Vector2Int direction = GetDirection();
         List<Tile> moveable = GetPawnAttack(direction);
@@ -26,7 +29,7 @@ public class PawnMovement : Movement
         return moveable;
     }
     Vector2Int GetDirection(){
-        if(StateMachineController.instance.currentlyPlaying.transform.name == "GreenPieces")
+        if(Board.instance.selectedPiece.transform.parent.name == "GreenPieces")
             return new Vector2Int(0, -1);
         return new Vector2Int(0, 1);
     }
