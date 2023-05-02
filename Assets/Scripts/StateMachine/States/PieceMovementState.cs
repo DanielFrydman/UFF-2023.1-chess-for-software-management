@@ -58,10 +58,10 @@ public class PieceMovementState : State
         piece.tile.content = piece;
 
         if(skipMovements){
+            piece.wasMoved = true;
             piece.transform.position = Board.instance.selectedHighlight.transform.position;
             tcs.SetResult(true);
         }else{
-            piece.wasMoved = true;
             float timing = Vector3.Distance(piece.transform.position, Board.instance.selectedHighlight.transform.position)*0.5f;
             LeanTween.move(piece.gameObject, Board.instance.selectedHighlight.transform.position, timing).
                 setOnComplete(()=> {
