@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Movement
 {
-    public float value;
+    public int value;
     public abstract List<Tile> GetValidMoves();
     protected bool IsEnemy(Tile tile)
     {
