@@ -5,7 +5,7 @@ using UnityEngine;
 public class KnightMovement : Movement
 {
     public KnightMovement(){
-        value = 3;
+        value = 300;
     }
     public override List<Tile> GetValidMoves(){
         List<Tile> moves = new List<Tile>();
