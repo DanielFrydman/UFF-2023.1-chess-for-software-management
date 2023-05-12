@@ -41,6 +41,8 @@ public class PieceMovementState : State
         AffectedPiece pieceMoving = new AffectedPiece();
         pieceMoving.piece = piece;
         pieceMoving.from = piece.tile;
+        pieceMoving.to = Board.instance.selectedHighlight.tile;
+        pieceMoving.wasMoved = piece.wasMoved;
         changes.Add(pieceMoving);
 
         piece.tile.content = null;
@@ -50,16 +52,17 @@ public class PieceMovementState : State
             Piece deadPiece = piece.tile.content;
             AffectedPiece pieceKilled = new AffectedPiece();
             pieceKilled.piece = deadPiece;
-            pieceKilled.from = piece.tile;
+            pieceKilled.from = pieceKilled.to = piece.tile;
             changes.Add(pieceKilled);
             deadPiece.gameObject.SetActive(false);
         }
 
         piece.tile.content = piece;
+        piece.wasMoved = true;
 
         if(skipMovements){
             piece.wasMoved = true;
-            piece.transform.position = Board.instance.selectedHighlight.transform.position;
+            // piece.transform.position = Board.instance.selectedHighlight.transform.position;
             tcs.SetResult(true);
         }else{
             float timing = Vector3.Distance(piece.transform.position, Board.instance.selectedHighlight.transform.position)*0.5f;
