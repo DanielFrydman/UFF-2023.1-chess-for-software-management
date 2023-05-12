@@ -36,7 +36,7 @@ public class AIController : MonoBehaviour
         currentPly.bestFuture = calculation.Result;
 
         Debug.Log("calculations"+calculationCount);
-        Debug.Log("time:"+Time.realtimeSinceStartup-lastInterval);
+        Debug.Log("time:"+(Time.realtimeSinceStartup-lastInterval));
         PrintBestPly(currentPly.bestFuture);
     }
     async Task<Ply> CalculatePly(Ply parentPly, List<PieceEvaluation> team, int currentPlyDepth, int minimaxDirection){
