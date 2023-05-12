@@ -6,8 +6,7 @@ public class Ply
 {
     public List<PieceEvaluation> golds;
     public List<PieceEvaluation> greens;
-    public float score;
-    public string name;
+    public int score;
     public List<AffectedPiece> changes;
     public MoveType moveType;
     public Ply originPly;
