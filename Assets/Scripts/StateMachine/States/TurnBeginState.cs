@@ -12,6 +12,9 @@ public class TurnBeginState : State
             machine.currentlyPlaying = machine.player1;
 
         await Task.Delay(100);
-        machine.ChangeTo<PieceSelectionState>();
+        if(machine.currentlyPlaying.AIControlled)
+            machine.ChangeTo<AIPlayingState>();
+        else
+            machine.ChangeTo<PieceSelectionState>();
     }
 }
