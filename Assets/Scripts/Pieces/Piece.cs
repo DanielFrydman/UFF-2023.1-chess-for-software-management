@@ -13,6 +13,9 @@ public abstract class Piece : MonoBehaviour
         if(transform.parent.name == "GoldPieces")
             maxTeam = true;
     }
+    public virtual AffectedPiece CreateAffected(){
+        return new AffectedPiece();
+    }
     void OnMouseDown(){ 
         InputController.instance.tileClicked(this, transform.parent.GetComponent<Player>());
     }
