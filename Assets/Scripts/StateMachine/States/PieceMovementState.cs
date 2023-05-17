@@ -38,11 +38,10 @@ public class PieceMovementState : State
     }
     static void NormalMove(TaskCompletionSource<bool> tcs, bool skipMovements){
         Piece piece = Board.instance.selectedPiece;
-        AffectedPiece pieceMoving = new AffectedPiece();
+        AffectedPiece pieceMoving = piece.CreateAffected();
         pieceMoving.piece = piece;
         pieceMoving.from = piece.tile;
         pieceMoving.to = Board.instance.tiles[Board.instance.selectedMove.pos];
-        pieceMoving.wasMoved = piece.wasMoved;
         changes.Insert(0, pieceMoving);
 
         piece.tile.content = null;
@@ -75,17 +74,15 @@ public class PieceMovementState : State
     }
     static void Castling(TaskCompletionSource<bool> tcs, bool skipMovements){
         Piece king = Board.instance.selectedPiece;
-        AffectedPiece affectedKing = new AffectedPiece();
+        AffectedKingRook affectedKing = new AffectedKingRook();
         affectedKing.from = king.tile;
         king.tile.content = null;
-        affectedKing.wasMoved = king.wasMoved;
         affectedKing.piece = king;
 
         Piece rook = Board.instance.tiles[Board.instance.selectedMove.pos].content;
-        AffectedPiece affectedRook = new AffectedPiece();
+        AffectedKingRook affectedRook = new AffectedKingRook();
         affectedRook.from = rook.tile;
         rook.tile.content = null;
-        affectedRook.wasMoved = rook.wasMoved;
         affectedRook.piece = rook;
 
         Vector2Int direction = rook.tile.pos - king.tile.pos;
@@ -137,7 +134,6 @@ public class PieceMovementState : State
         AffectedPiece affectedEnemy = new AffectedPiece();
         affectedEnemy.from = affectedEnemy.to = enemy;
         affectedEnemy.piece = enemy.content;
-        affectedEnemy.wasMoved = enemy.content.wasMoved;
         changes.Add(affectedEnemy);
         enemy.content.gameObject.SetActive(false);
         enemy.content = null;
@@ -147,20 +143,33 @@ public class PieceMovementState : State
         TaskCompletionSource<bool> movementTCS = new TaskCompletionSource<bool>();
         NormalMove(movementTCS, skipMovements);
         await movementTCS.Task;
+        Pawn pawn = Board.instance.selectedPiece as Pawn;
         
-        StateMachineController.instance.taskHold = new TaskCompletionSource<object>();
-        StateMachineController.instance.promotionPanel.SetActive(true);
+        if(!skipMovements){
+            StateMachineController.instance.taskHold = new TaskCompletionSource<object>();
+            StateMachineController.instance.promotionPanel.SetActive(true);
 
-        await StateMachineController.instance.taskHold.Task;
+            await StateMachineController.instance.taskHold.Task;
 
-        string result = StateMachineController.instance.taskHold.Task.Result as string;
-        if(result == "Knight"){
-            Board.instance.selectedPiece.movement = new KnightMovement();
+            string result = StateMachineController.instance.taskHold.Task.Result as string;
+            if(result == "Knight"){
+                Board.instance.selectedPiece.movement = pawn.knightMovement;
+            }else{
+                Board.instance.selectedPiece.movement = pawn.queenMovement;
+            }
+            StateMachineController.instance.promotionPanel.SetActive(false);
         }else{
-            Board.instance.selectedPiece.movement = new QueenMovement();
+            AffectedPawn affectedPawn = new AffectedPawn();
+            affectedPawn.wasMoved = true;
+            affectedPawn.resetMovement = true;
+            affectedPawn.from = changes[0].from;
+            affectedPawn.to = changes[0].to;
+            affectedPawn.piece = pawn;
+
+            changes[0] = affectedPawn;
+            pawn.movement = pawn.queenMovement;
         }
 
-        StateMachineController.instance.promotionPanel.SetActive(false);
         tsc.SetResult(true);
     }
 }
