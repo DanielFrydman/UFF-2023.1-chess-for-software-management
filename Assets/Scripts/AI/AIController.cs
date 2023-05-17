@@ -11,6 +11,7 @@ public class AIController : MonoBehaviour
     int calculationCount;
     public int objectivePlyDepth = 2;
     float lastInterval;
+    public AvailableMove enPassantFlagSaved;
     void Awake(){
         instance = this;
     }
@@ -18,6 +19,7 @@ public class AIController : MonoBehaviour
     public async void CalculatePlays(){
         lastInterval = Time.realtimeSinceStartup;
         int minimaxDirection = 1;
+        enPassantFlagSaved = PieceMovementState.enPassantFlag;
         currentState = CreateSnapShot();
         calculationCount = 0;
 
@@ -38,6 +40,7 @@ public class AIController : MonoBehaviour
         Debug.Log("calculations"+calculationCount);
         Debug.Log("time:"+(Time.realtimeSinceStartup-lastInterval));
         PrintBestPly(currentPly.bestFuture);
+        PieceMovementState.enPassantFlag = enPassantFlagSaved;
     }
     async Task<Ply> CalculatePly(Ply parentPly, List<PieceEvaluation> team, int currentPlyDepth, int minimaxDirection){
         parentPly.futurePlies = new List<Ply>();
@@ -54,28 +57,30 @@ public class AIController : MonoBehaviour
         parentPly.bestFuture = plyceHolder;
 
         foreach(PieceEvaluation eva in team){
-            foreach(Tile t in eva.availableMoves){
+            foreach(AvailableMove move in eva.availableMoves){
                 calculationCount++;
                 Board.instance.selectedPiece = eva.piece;
-                Board.instance.selectedHighlight = AIhighlight;
-                AIhighlight.tile = t;
-                AIhighlight.transform.position = new Vector3(t.pos.x, t.pos.y, 0);
+                Board.instance.selectedMove = move;
                 TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-                PieceMovementState.MovePiece(tcs, true);
+                PieceMovementState.MovePiece(tcs, true, move.moveType);
                 await tcs.Task;
+
                 Ply newPly = CreateSnapShot(parentPly);
                 newPly.changes = PieceMovementState.changes;
+                newPly.enPassantFlag = PieceMovementState.enPassantFlag;
                 Task<Ply> calculation = CalculatePly(
                     newPly,
                     GetTeam(newPly, minimaxDirection * -1),
                     currentPlyDepth,
                     minimaxDirection * -1
                 );
-            await calculation;
+                await calculation;
+
                 parentPly.bestFuture = IsBest(parentPly.bestFuture, minimaxDirection, calculation.Result);
-                newPly.moveType = t.moveType;
                 newPly.originPly = parentPly;
                 parentPly.futurePlies.Add(newPly);
+
+                PieceMovementState.enPassantFlag = parentPly.enPassantFlag;
                 ResetBoardBackwards(newPly);
             }
         }
