@@ -9,17 +9,16 @@ public class PieceMovementState : State
     public static AvailableMove enPassantFlag;
     public override async void Enter(){
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        MovePiece(tcs, false);
+        MovePiece(tcs, false, Board.instance.selectedMove.moveType);
 
         await tcs.Task;
         machine.ChangeTo<TurnEndState>();
     }
-    public static void MovePiece(TaskCompletionSource<bool> tcs, bool skipMovements){
+    public static void MovePiece(TaskCompletionSource<bool> tcs, bool skipMovements, MoveType moveType){
         changes = new List<AffectedPiece>();
-        MoveType movetype = Board.instance.selectedHighlight.tile.moveType;
-        ClearEnPassants();
+        enPassantFlag = new AvailableMove();
 
-        switch(movetype){
+        switch(moveType){
             case MoveType.Normal:
                 NormalMove(tcs, skipMovements);
                 break;
@@ -42,12 +41,12 @@ public class PieceMovementState : State
         AffectedPiece pieceMoving = new AffectedPiece();
         pieceMoving.piece = piece;
         pieceMoving.from = piece.tile;
-        pieceMoving.to = Board.instance.selectedHighlight.tile;
+        pieceMoving.to = Board.instance.tiles[Board.instance.selectedMove.pos];
         pieceMoving.wasMoved = piece.wasMoved;
-        changes.Add(pieceMoving);
+        changes.Insert(0, pieceMoving);
 
         piece.tile.content = null;
-        piece.tile = Board.instance.selectedHighlight.tile;
+        piece.tile =pieceMoving.to;
 
         if(piece.tile.content != null){
             Piece deadPiece = piece.tile.content;
@@ -61,13 +60,14 @@ public class PieceMovementState : State
         piece.tile.content = piece;
         piece.wasMoved = true;
 
+        Vector3 v3Pos = new Vector3(Board.instance.selectedMove.pos.x, Board.instance.selectedMove.pos.y, 0);
         if(skipMovements){
             piece.wasMoved = true;
-            // piece.transform.position = Board.instance.selectedHighlight.transform.position;
+            // piece.transform.position = v3Pos;
             tcs.SetResult(true);
         }else{
-            float timing = Vector3.Distance(piece.transform.position, Board.instance.selectedHighlight.transform.position)*0.5f;
-            LeanTween.move(piece.gameObject, Board.instance.selectedHighlight.transform.position, timing).
+            float timing = Vector3.Distance(piece.transform.position, v3Pos)*0.5f;
+            LeanTween.move(piece.gameObject, v3Pos, timing).
                 setOnComplete(()=> {
                 tcs.SetResult(true);
             });
@@ -81,7 +81,7 @@ public class PieceMovementState : State
         affectedKing.wasMoved = king.wasMoved;
         affectedKing.piece = king;
 
-        Piece rook = Board.instance.selectedHighlight.tile.content;
+        Piece rook = Board.instance.tiles[Board.instance.selectedMove.pos].content;
         AffectedPiece affectedRook = new AffectedPiece();
         affectedRook.from = rook.tile;
         rook.tile.content = null;
@@ -118,31 +118,27 @@ public class PieceMovementState : State
             LeanTween.move(rook.gameObject, new Vector3(rook.tile.pos.x, rook.tile.pos.y, 0), 1.4f);
         }
     }
-   static void ClearEnPassants(){
-    ClearEnPassants(5);
-    ClearEnPassants(2);
-   }
-   static void ClearEnPassants(int height){
-        Vector2Int positions = new Vector2Int(0, height);
-        for(int i=0; i<7; i++){
-            positions.x = positions.x+1;
-            Board.instance.tiles[positions].moveType = MoveType.Normal;
-        }
-    }
     static void PawnDoubleMove(TaskCompletionSource<bool> tsc, bool skipMovements){
         Piece pawn = Board.instance.selectedPiece;
-        Vector2Int direction = pawn.tile.pos.y > Board.instance.selectedHighlight.tile.pos.y ?
-            new Vector2Int(0, -1):
-            new Vector2Int(0, 1);
-        Board.instance.tiles[pawn.tile.pos+direction].moveType = MoveType.EnPassant;
+        Vector2Int direction = pawn.maxTeam ?
+            new Vector2Int(0, 1):
+            new Vector2Int(0, -1);
+
+        enPassantFlag = new AvailableMove(pawn.tile.pos + direction, MoveType.EnPassant);
         NormalMove(tsc, skipMovements);
     }
     static void EnPassant(TaskCompletionSource<bool> tsc, bool skipMovements){
         Piece pawn = Board.instance.selectedPiece;
-        Vector2Int direction = pawn.tile.pos.y > Board.instance.selectedHighlight.tile.pos.y ?
-            new Vector2Int(0, 1):
-            new Vector2Int(0, -1);
-        Tile enemy = Board.instance.tiles[Board.instance.selectedHighlight.tile.pos+direction];
+        Vector2Int direction = pawn.maxTeam ?
+            new Vector2Int(0, -1):
+            new Vector2Int(0, 1);
+        
+        Tile enemy = Board.instance.tiles[Board.instance.selectedMove.pos+direction];
+        AffectedPiece affectedEnemy = new AffectedPiece();
+        affectedEnemy.from = affectedEnemy.to = enemy;
+        affectedEnemy.piece = enemy.content;
+        affectedEnemy.wasMoved = enemy.content.wasMoved;
+        changes.Add(affectedEnemy);
         enemy.content.gameObject.SetActive(false);
         enemy.content = null;
         NormalMove(tsc, skipMovements);
