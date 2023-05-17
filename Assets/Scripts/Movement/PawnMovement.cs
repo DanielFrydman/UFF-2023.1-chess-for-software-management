@@ -20,7 +20,7 @@ public class PawnMovement : Movement
         }else{
             moves = UntilBlockedPath(direction, false, 1);
             if(moves.Count > 0)
-                moves[0] = new 
+                moves[0] = CheckPromotion(moves[0]);
         }
 
         moveable.AddRange(moves);
@@ -47,7 +47,7 @@ public class PawnMovement : Movement
            pawnAttack.Add(new AvailableMove(tile.pos, MoveType.EnPassant)); 
         }
     }
-    void CheckPromotion(AvailableMove availableMove){
+    AvailableMove CheckPromotion(AvailableMove availableMove){
         int promotionHeight = 0;
         if(Board.instance.selectedPiece.maxTeam)
             promotionHeight = 7;
