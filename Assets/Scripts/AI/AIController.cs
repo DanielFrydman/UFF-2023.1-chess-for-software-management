@@ -155,6 +155,7 @@ public class AIController : MonoBehaviour
             p.piece.tile.content = null;
             p.piece.tile = p.from;
             p.from.content = p.piece;
+            p.piece.wasMoved = p.wasMoved;
             // p.piece.transform.position = new Vector3(p.from.pos.x, p.from.pos.y, 0);
             p.piece.gameObject.SetActive(true);
         }
@@ -168,6 +169,7 @@ public class AIController : MonoBehaviour
                 currentPly.changes[0].piece.name,
                 currentPly.changes[0].to.pos
             );
+            currentPly = currentPly.originPly;
         }
     }
 }
