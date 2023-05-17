@@ -5,5 +5,5 @@ using UnityEngine;
 public class PieceEvaluation
 {
     public Piece piece;
-    public List<Tile> availableMoves;
+    public List<AvailableMove> availableMoves;
 }
