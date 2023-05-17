@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 public class AIController : MonoBehaviour
 {
     public static AIController instance;
-    public Ply currentState;
     public HighlightClick AIhighlight;
     int calculationCount;
     public int objectivePlyDepth = 2;
@@ -22,14 +21,18 @@ public class AIController : MonoBehaviour
         minPly.score = -999999;
     }
     [ContextMenu("Calculate Plays")]
-    public async void CalculatePlays(){
+    public async Task<Ply> CalculatePlays(){
         lastInterval = Time.realtimeSinceStartup;
-        int minimaxDirection = 1;
+        int minimaxDirection;
+        if(StateMachineController.instance.currentlyPlaying == StateMachineController.instance.player1)
+            minimaxDirection = 1;
+        else
+            minimaxDirection = -1;
+
         enPassantFlagSaved = PieceMovementState.enPassantFlag;
-        currentState = CreateSnapShot();
+        Ply currentPly = CreateSnapShot();
         calculationCount = 0;
 
-        Ply currentPly = currentState;
         currentPly.originPly = null;
         int currentPlyDepth = 0;
         currentPly.changes = new List<AffectedPiece>();
@@ -45,6 +48,7 @@ public class AIController : MonoBehaviour
 
         PrintBestPly(currentPly.bestFuture);
         PieceMovementState.enPassantFlag = enPassantFlagSaved;
+        return currentPly.bestFuture;
     }
     async Task<Ply> CalculatePly(Ply parentPly, List<PieceEvaluation> team, int currentPlyDepth, int minimaxDirection){
         parentPly.futurePlies = new List<Ply>();
