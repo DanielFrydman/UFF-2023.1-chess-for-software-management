@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 public class PieceMovementState : State
 {
     public static List<AffectedPiece> changes;
+    public static AvailableMove enPassantFlag;
     public override async void Enter(){
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
         MovePiece(tcs, false);
@@ -74,9 +75,18 @@ public class PieceMovementState : State
     }
     static void Castling(TaskCompletionSource<bool> tcs, bool skipMovements){
         Piece king = Board.instance.selectedPiece;
+        AffectedPiece affectedKing = new AffectedPiece();
+        affectedKing.from = king.tile;
         king.tile.content = null;
+        affectedKing.wasMoved = king.wasMoved;
+        affectedKing.piece = king;
+
         Piece rook = Board.instance.selectedHighlight.tile.content;
+        AffectedPiece affectedRook = new AffectedPiece();
+        affectedRook.from = rook.tile;
         rook.tile.content = null;
+        affectedRook.wasMoved = rook.wasMoved;
+        affectedRook.piece = rook;
 
         Vector2Int direction = rook.tile.pos - king.tile.pos;
         if(direction.x>0){
@@ -88,16 +98,25 @@ public class PieceMovementState : State
             rook.tile = Board.instance.tiles[new Vector2Int(king.tile.pos.x+1, king.tile.pos.y)];
         }
         king.tile.content = king;
+        affectedKing.to = king.tile;
+        changes.Add(affectedKing);
+
         rook.tile.content = rook;
+        affectedRook.to = rook.tile;
+        changes.Add(affectedRook);
+
         king.wasMoved = true;
         rook.wasMoved = true;
 
-        LeanTween.move(king.gameObject, new Vector3(king.tile.pos.x, king.tile.pos.y, 0), 1.5f).
-            setOnComplete(()=> {
-                tcs.SetResult(true);
-            });
-        LeanTween.move(rook.gameObject, new Vector3(rook.tile.pos.x, rook.tile.pos.y, 0), 1.4f);
-
+        if(skipMovements){
+            tcs.SetResult(true);
+        }else{
+            LeanTween.move(king.gameObject, new Vector3(king.tile.pos.x, king.tile.pos.y, 0), 1.5f).
+                setOnComplete(()=> {
+                    tcs.SetResult(true);
+                });
+            LeanTween.move(rook.gameObject, new Vector3(rook.tile.pos.x, rook.tile.pos.y, 0), 1.4f);
+        }
     }
    static void ClearEnPassants(){
     ClearEnPassants(5);
