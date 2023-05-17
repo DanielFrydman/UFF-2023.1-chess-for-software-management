@@ -30,11 +30,11 @@ public class KingMovement : Movement
 
         Tile temp = CheckRook(new Vector2Int(1, 0));
         if(temp!=null){
-            moves.Add(bew AvailableMove(temp.pos, MoveType.Castling));
+            moves.Add(new AvailableMove(temp.pos, MoveType.Castling));
         }
         temp = CheckRook(new Vector2Int(-1, 0));
         if(temp!=null){
-            moves.Add(new AvailableMove(temp.pos,  MoveType.Castling));
+            moves.Add(new AvailableMove(temp.pos, MoveType.Castling));
         }
         return moves;
     }
