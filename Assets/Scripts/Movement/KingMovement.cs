@@ -5,10 +5,10 @@ using UnityEngine;
 public class KingMovement : Movement
 {
     public KingMovement(){
-        value = 1000;
+        value = 100000;
     }
-    public override List<Tile> GetValidMoves(){
-        List<Tile> moves = new List<Tile>();
+    public override List<AvailableMove> GetValidMoves(){
+        List<AvailableMove> moves = new List<AvailableMove>();
         moves.AddRange(UntilBlockedPath(new Vector2Int(1, 0), true, 1));
         moves.AddRange(UntilBlockedPath(new Vector2Int(-1, 0), true, 1));
 
@@ -20,25 +20,21 @@ public class KingMovement : Movement
         moves.AddRange(UntilBlockedPath(new Vector2Int(-1, -1), true, 1));
         moves.AddRange(UntilBlockedPath(new Vector2Int(-1, 1), true, 1));
 
-        SetNormalMove(moves);
-
         moves.AddRange(Castling());
         return moves;
     }
-    List<Tile> Castling(){
-        List<Tile> moves = new List<Tile>();
+    List<AvailableMove> Castling(){
+        List<AvailableMove> moves = new List<AvailableMove>();
         if(Board.instance.selectedPiece.wasMoved)
             return moves;
 
         Tile temp = CheckRook(new Vector2Int(1, 0));
         if(temp!=null){
-            temp.moveType = MoveType.Castling;
-            moves.Add(temp);
+            moves.Add(new AvailableMove(temp.pos, MoveType.Castling));
         }
         temp = CheckRook(new Vector2Int(-1, 0));
         if(temp!=null){
-            temp.moveType = MoveType.Castling;
-            moves.Add(temp);
+            moves.Add(new AvailableMove(temp.pos, MoveType.Castling));
         }
         return moves;
     }
