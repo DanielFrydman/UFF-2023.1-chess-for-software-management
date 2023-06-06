@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,22 +10,25 @@ public class PawnMovement : Movement
         if(maxTeam){
             direction = new Vector2Int(0, 1);
             promotionHeight = 7;
+            positionValue = AIController.instance.squareTable.pawnGold;
         }else{
             direction = new Vector2Int(0, -1);
             promotionHeight = 0;
+            positionValue = AIController.instance.squareTable.pawnGreen;
         }
         value = 100;
     }
     public override List<AvailableMove> GetValidMoves(){
-        List<AvailableMove> moveable = GetPawnAttack(direction);
-        List<AvailableMove> moves;
+        List<AvailableMove> moveable = new List<AvailableMove>();
+        List<AvailableMove> moves = new List<AvailableMove>();
+        GetPawnAttack(moveable);
 
         if(!Board.instance.selectedPiece.wasMoved){
-            moves = UntilBlockedPath(direction, false, 2);
+            UntilBlockedPath(moves, direction, false, 2);
             if(moves.Count == 2)
                 moves[1] = new AvailableMove(moves[1].pos, MoveType.PawnDoubleMove);
         }else{
-            moves = UntilBlockedPath(direction, false, 1);
+            UntilBlockedPath(moves, direction, false, 1);
             if(moves.Count > 0)
                 moves[0] = CheckPromotion(moves[0]);
         }
@@ -34,16 +37,14 @@ public class PawnMovement : Movement
 
         return moveable;
     }
-    List<AvailableMove> GetPawnAttack(Vector2Int direction){
-        List<AvailableMove> pawnAttack = new List<AvailableMove>();
+    void GetPawnAttack(List<AvailableMove> pawnAttack)
+    {
         Piece piece = Board.instance.selectedPiece;
         Vector2Int leftPos = new Vector2Int(piece.tile.pos.x - 1, piece.tile.pos.y + direction.y);
         Vector2Int rightPos = new Vector2Int(piece.tile.pos.x + 1, piece.tile.pos.y + direction.y);
-        
+
         GetPawnAttack(GetTile(leftPos), pawnAttack);
         GetPawnAttack(GetTile(rightPos), pawnAttack);
-        
-        return pawnAttack;
     }
     void GetPawnAttack(Tile tile, List<AvailableMove> pawnAttack){
         if(tile == null)
@@ -60,6 +61,3 @@ public class PawnMovement : Movement
         return new AvailableMove(availableMove.pos, MoveType.Promotion);
     }
 }
-
-
-    
