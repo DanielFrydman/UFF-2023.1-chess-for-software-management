@@ -1,10 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Knight : Piece
 {
-   void Awake(){
-      movement = new KnightMovement();
+   protected override void Start(){
+        base.Start();
+        movement = new KnightMovement(maxTeam);
     }
 }

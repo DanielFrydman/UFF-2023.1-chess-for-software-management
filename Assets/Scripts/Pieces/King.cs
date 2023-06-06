@@ -1,11 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class King : Piece
 {
-    void Awake(){
-        movement = new KingMovement();
+    protected override void Start(){
+        base.Start();
+        movement = new KingMovement(maxTeam);
     }
     public override AffectedPiece CreateAffected(){
         AffectedKingRook aff = new AffectedKingRook();
