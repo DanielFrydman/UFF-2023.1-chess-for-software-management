@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
@@ -53,14 +53,13 @@ public class Board : MonoBehaviour
     public void CreateBoard(){
         for (int i = 0; i < 8; i++){
             for (int j = 0; j < 8; j++){
-                CreateFile(i, j);
+                CreateTile(i, j);
             }
         }
     }
-    void CreateFile(int i, int j){
+    void CreateTile(int i, int j){
         Tile tile = new Tile();
         tile.pos = new Vector2Int(i, j);
         tiles.Add(tile.pos, tile);
     }
 }
-

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
@@ -48,24 +48,28 @@ public class PieceMovementState : State
         piece.tile =pieceMoving.to;
 
         if(piece.tile.content != null){
-            Piece deadPiece = piece.tile.content;
-            AffectedPiece pieceKilled = new AffectedPiece();
+            Piece deadPiece = piece.tile.content as Piece;
+            AffectedEnemy pieceKilled = new AffectedEnemy();
             pieceKilled.piece = deadPiece;
-            pieceKilled.from = pieceKilled.to = piece.tile;
+            pieceKilled.to = pieceKilled.from = piece.tile;
             changes.Add(pieceKilled);
             deadPiece.gameObject.SetActive(false);
+            pieceKilled.index = deadPiece.team.IndexOf(deadPiece);
+            deadPiece.team.RemoveAt(pieceKilled.index);
         }
 
         piece.tile.content = piece;
         piece.wasMoved = true;
 
-        Vector3 v3Pos = new Vector3(Board.instance.selectedMove.pos.x, Board.instance.selectedMove.pos.y, 0);
-        if(skipMovements){
+        if (skipMovements){
             piece.wasMoved = true;
             // piece.transform.position = v3Pos;
             tcs.SetResult(true);
         }else{
-            float timing = Vector3.Distance(piece.transform.position, v3Pos)*0.5f;
+            Vector3 v3Pos = new Vector3(Board.instance.selectedMove.pos.x, Board.instance.selectedMove.pos.y, 0);
+            float timing = Vector3.Distance
+                (piece.transform.position, v3Pos) * 0.5f;
+
             LeanTween.move(piece.gameObject, v3Pos, timing).
                 setOnComplete(()=> {
                 tcs.SetResult(true);
@@ -115,31 +119,34 @@ public class PieceMovementState : State
             LeanTween.move(rook.gameObject, new Vector3(rook.tile.pos.x, rook.tile.pos.y, 0), 1.4f);
         }
     }
-    static void PawnDoubleMove(TaskCompletionSource<bool> tsc, bool skipMovements){
+    static void PawnDoubleMove(TaskCompletionSource<bool> tcs, bool skipMovements){
         Piece pawn = Board.instance.selectedPiece;
         Vector2Int direction = pawn.maxTeam ?
-            new Vector2Int(0, 1):
+            new Vector2Int(0, 1) :
             new Vector2Int(0, -1);
 
         enPassantFlag = new AvailableMove(pawn.tile.pos + direction, MoveType.EnPassant);
-        NormalMove(tsc, skipMovements);
+        NormalMove(tcs, skipMovements);
     }
-    static void EnPassant(TaskCompletionSource<bool> tsc, bool skipMovements){
+    static void EnPassant(TaskCompletionSource<bool> tcs, bool skipMovements){
         Piece pawn = Board.instance.selectedPiece;
         Vector2Int direction = pawn.maxTeam ?
-            new Vector2Int(0, -1):
+            new Vector2Int(0, -1) :
             new Vector2Int(0, 1);
-        
-        Tile enemy = Board.instance.tiles[Board.instance.selectedMove.pos+direction];
-        AffectedPiece affectedEnemy = new AffectedPiece();
+
+        Tile enemy = Board.instance.tiles[Board.instance.selectedMove.pos + direction];
+        AffectedEnemy affectedEnemy = new AffectedEnemy();
         affectedEnemy.from = affectedEnemy.to = enemy;
         affectedEnemy.piece = enemy.content;
+        affectedEnemy.index = affectedEnemy.piece.team.IndexOf(affectedEnemy.piece);
+        affectedEnemy.piece.team.RemoveAt(affectedEnemy.index);
         changes.Add(affectedEnemy);
         enemy.content.gameObject.SetActive(false);
         enemy.content = null;
-        NormalMove(tsc, skipMovements);
+
+        NormalMove(tcs, skipMovements);
     }
-    static async void Promotion(TaskCompletionSource<bool> tsc, bool skipMovements){
+    static async void Promotion(TaskCompletionSource<bool> tcs, bool skipMovements){
         TaskCompletionSource<bool> movementTCS = new TaskCompletionSource<bool>();
         NormalMove(movementTCS, skipMovements);
         await movementTCS.Task;
@@ -170,6 +177,6 @@ public class PieceMovementState : State
             pawn.movement = pawn.queenMovement;
         }
 
-        tsc.SetResult(true);
+        tcs.SetResult(true);
     }
 }

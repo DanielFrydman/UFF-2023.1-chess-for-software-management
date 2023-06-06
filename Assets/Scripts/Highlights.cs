@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +11,8 @@ public class Highlights : MonoBehaviour
     void Awake(){
         instance = this;
     }
-    public void SelectTiles(List<AvailableMove> availableMove){
-        foreach(AvailableMove move in availableMove){
+    public void SelectTiles(List<AvailableMove> availableMoves){
+        foreach(AvailableMove move in availableMoves){
             if(onReserve.Count == 0)
                 CreateHighlight();
             SpriteRenderer sr = onReserve.Dequeue();
