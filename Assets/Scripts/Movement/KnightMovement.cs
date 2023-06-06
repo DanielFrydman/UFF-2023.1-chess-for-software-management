@@ -1,11 +1,15 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class KnightMovement : Movement
 {
-    public KnightMovement(){
+    public KnightMovement(bool maxTeam){
         value = 300;
+        if(maxTeam)
+            positionValue = AIController.instance.squareTable.knightGold;
+        else
+            positionValue = AIController.instance.squareTable.knightGreen;
     }
     public override List<AvailableMove> GetValidMoves(){
         List<AvailableMove> moves = new List<AvailableMove>();

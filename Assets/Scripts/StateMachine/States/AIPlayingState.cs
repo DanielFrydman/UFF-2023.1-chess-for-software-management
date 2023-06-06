@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
@@ -26,12 +26,6 @@ public class AIPlayingState : State
         machine.ChangeTo<PieceMovementState>();
     }
     AvailableMove GetMoveType(Ply ply){
-        List<PieceEvaluation> team;
-        if(machine.currentlyPlaying == machine.player1)
-            team = ply.golds;
-        else
-            team = ply.greens;
-        
         List<AvailableMove> moves = Board.instance.selectedPiece.movement.GetValidMoves();
         foreach(AvailableMove move in moves){
             if(move.pos == ply.changes[0].to.pos)
