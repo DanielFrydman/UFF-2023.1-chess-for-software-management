@@ -11,8 +11,5 @@ Esse repositório é para o trabalho Jogo de Xadrez proposto pelo professor Leon
 * Leonardo Tramont Lutz Moreira
 * Igor Encarnacao Junqueira Castro
 
-## Link para aplicação
-~~ projeto ainda sem link de deploy ~~
-
 ## Linguagem / Framework
 * Esse projeto foi feito com C# e com Unity.
