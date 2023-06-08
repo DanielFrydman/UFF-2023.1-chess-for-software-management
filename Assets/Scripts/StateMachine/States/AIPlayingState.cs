@@ -19,9 +19,7 @@ public class AIPlayingState : State
         }
 
         Board.instance.selectedPiece = currentPly.changes[0].piece;
-        Debug.Log(currentPly.changes[0].piece.name);
         Board.instance.selectedMove = GetMoveType(currentPly);
-        Debug.Log(Board.instance.selectedMove);
         await Task.Delay(100);
         machine.ChangeTo<PieceMovementState>();
     }
