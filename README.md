@@ -1,9 +1,9 @@
 # README
 
-## Objetivo
-Esse repositório é para o trabalho Jogo de Xadrez proposto pelo professor Leonardo Gresta Paulino Murta na matéria Gerência de Projetos e Manutenção de Software no período 2023.1 da Univeridade Federal Fluminense.
+## Objective
+This repository is for the Chess Game project proposed by Professor Leonardo Gresta Paulino Murta in the Project Management and Software Maintenance course during the 2023.1 semester at the Federal Fluminense University.
 
-## Integrantes
+## Team Members
 * Daniel David Frydman
 * Natan de Miranda Bueno
 * Matheus Vieira da Silva
@@ -11,5 +11,5 @@ Esse repositório é para o trabalho Jogo de Xadrez proposto pelo professor Leon
 * Leonardo Tramont Lutz Moreira
 * Igor Encarnacao Junqueira Castro
 
-## Linguagem / Framework
-* Esse projeto foi feito com C# e com Unity.
+## Language / Framework
+* This project was developed using C# and Unity.
